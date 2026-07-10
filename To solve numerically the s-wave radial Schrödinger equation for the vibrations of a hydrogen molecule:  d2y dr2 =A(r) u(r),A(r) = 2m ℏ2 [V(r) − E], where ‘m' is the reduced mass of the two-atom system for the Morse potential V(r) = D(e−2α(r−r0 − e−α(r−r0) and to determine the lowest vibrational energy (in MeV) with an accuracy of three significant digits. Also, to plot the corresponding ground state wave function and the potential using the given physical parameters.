@@ -11,17 +11,20 @@ rmax = 5;
 N = 600; 
 
 h = (rmax - rmin)/(N+1);
-r = (1:N)' * h; // FIXED: Added transpose (') to make r a column vector
+r = (1:N)' * h; 
 x = r - r0; 
-V = D*(exp(-2*alpha*x) - 2*exp(-alpha*x));
+
+// Perfected Morse Potential (shifted so minimum is exactly at 0)
+// Using .^ to ensure element-wise squaring for the vector
+V = D * (1 - exp(-alpha*x)).^2;
 
 H = zeros(N,N); 
-for i = 1:N // FIXED: Added line break after loop declaration
+for i = 1:N 
     H(i,i) = 2*A/(h^2) + V(i); 
-    if i > 1 then // FIXED: Moved 'then' to the correct line
+    if i > 1 then 
         H(i,i-1) = -A/(h^2);
     end 
-    if i < N then // FIXED: Moved 'then' to the correct line
+    if i < N then 
         H(i,i+1) = -A/(h^2);
     end 
 end 
@@ -34,16 +37,15 @@ psi0 = psi(:,idx);
 norm = sqrt(sum(psi0.^2)*h);
 psi0 = psi0/norm;
 
-// Cleaned up display output
 disp("Lowest vibrational energy (eV) = " + string(E0));
 
 subplot(2,1,1);
 plot(r, psi0);
 xlabel("r (Angstrom)");
 ylabel("Psi(r)"); 
-title("Ground State Wavefunction"); // FIXED: Removed rogue 's'
+title("Ground State Wavefunction"); 
 
-subplot(2,1,2); // FIXED: Corrected spelling of subplot
+subplot(2,1,2); 
 plot(r, V); 
 xlabel("r (Angstrom)");
 ylabel("Energy (eV)"); 
