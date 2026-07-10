@@ -1,0 +1,31 @@
+clear;
+clc;
+clf(); 
+hbar   = 1.054571817e-34; 
+me     = 9.10938356e-31;
+echarge= 1.602176634e-19;
+eps0   = 8.854187817e-12;
+k = echarge^2 / (4 * %pi * eps0);
+J_to_eV = 1.0 / echarge; rmax = 1e-9;
+N    = 5000; dr   = rmax / N;
+r = linspace(dr, rmax, N)';
+diag_main = -2*ones(N,1); diag_off  = ones(N-1,1);
+Lap = (diag(diag_main) + diag(diag_off,1) + diag(diag_off,-1)) / (dr^2);
+T = -(hbar^2/(2*me)) * Lap; V = diag(-k ./ r);
+H = T + V;
+[Psi, E] = spec(H); 
+E_sorted = gsort(diag(E), "g", "i"); E0_J  = E_sorted(1);
+E0_eV = E0_J * J_to_eV; E1_J  = E_sorted(2); E1_eV = E1_J * J_to_eV;
+disp("Ground state energy of Hydrogen atom (approx): " + string(E0_eV) + " eV");
+disp("Expected exact value: -13.6 eV"); disp("1st Excited state energy of Hydrogen atom (approx): " + string(E1_eV) + " eV"); disp("Expected exact value: -3.4 eV");
+subplot(2,1,1); plot(r, Psi(:,1));
+xtitle("H atom Ground State Wave Function")
+xlabel("r (m)"); 
+ylabel("Wavefunction");
+xgrid();
+subplot(2,1,2);
+plot(r, Psi(:,2)); 
+xtitle("H atom 1st Excited State Wave Function") 
+xlabel("r (m)"); 
+ylabel("Wavefunction");
+xgrid(); 
