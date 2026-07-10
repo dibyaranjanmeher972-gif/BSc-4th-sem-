@@ -1,0 +1,33 @@
+clc;clf;clear;
+e2 = 14.402;
+hc = 1973; 
+mc2 = 0.511e6; 
+h2_2m = (hc^2)/(2*mc2);
+a_values = [3 5 7]; 
+rmax = 20;
+N = 1000; 
+h = rmax/(N+1);
+r = (1:N)'*h;
+for i = 1:3  
+a = a_values(i); 
+V = -e2 ./ r .* exp(-r/a);   
+b = -h2_2m/(h^2);   
+diag_main = 2*h2_2m/(h^2) + V;    
+H = diag(diag_main) + diag(b*ones(N-1,1),1) + diag(b*ones(N-1,1),-1); 
+[psi,E] = spec(H);  
+Evals = diag(E);  
+[E0, idx] = min(Evals);  
+psi0 = psi(:, idx);  
+if psi0(1) < 0 then 
+psi0 = -psi0;
+end   
+norm = sqrt(sum(psi0.^2)*h);
+psi0 = psi0/norm;
+disp("Ground state energy (eV) for a = "+string(a)+" A = ");
+disp(E0); 
+subplot(3,1,i)
+plot(r,psi0) 
+title("a = "+string(a)+" Angstrom") 
+xlabel("r (Angstrom)")
+ylabel("u(r)")
+end 
