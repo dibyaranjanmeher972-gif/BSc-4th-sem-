@@ -1,4 +1,5 @@
 clc; clear; clf; 
+
 hc = 1973;
 m = 940e6; 
 D = 0.755501;
@@ -8,34 +9,42 @@ A = (hc^2)/(2*m);
 rmin = 0;
 rmax = 5;
 N = 600; 
+
 h = (rmax - rmin)/(N+1);
-r = (1:N)*h;
+r = (1:N)' * h; // FIXED: Added transpose (') to make r a column vector
 x = r - r0; 
 V = D*(exp(-2*alpha*x) - 2*exp(-alpha*x));
+
 H = zeros(N,N); 
-for i = 1:N H(i,i) = 2*A/(h^2) + V(i); 
-if i > 1 
-then H(i,i-1) = -A/(h^2);
+for i = 1:N // FIXED: Added line break after loop declaration
+    H(i,i) = 2*A/(h^2) + V(i); 
+    if i > 1 then // FIXED: Moved 'then' to the correct line
+        H(i,i-1) = -A/(h^2);
+    end 
+    if i < N then // FIXED: Moved 'then' to the correct line
+        H(i,i+1) = -A/(h^2);
+    end 
 end 
-if i < N 
-then H(i,i+1) = -A/(h^2);
-end 
-end 
+
 [psi,E] = spec(H);
 Evalues = diag(E); 
 [E0, idx] = min(Evalues);
 psi0 = psi(:,idx);
+
 norm = sqrt(sum(psi0.^2)*h);
 psi0 = psi0/norm;
-disp ("Lowest vibrational energy (eV) = ");
-disp (E0);
-subplot (2,1,1)
-plot (r, psi0)
-xlabel ("r (Angstrom)")
-ylabel ("Psi (r)") 
-title ("Ground State Wavefunction") s
-ubplot (2,1,2) 
-plot (r, V) 
-xlabel ("r (Angstrom)")
-ylabel ("Energy (eV)") 
-title ("Morse Potential")
+
+// Cleaned up display output
+disp("Lowest vibrational energy (eV) = " + string(E0));
+
+subplot(2,1,1);
+plot(r, psi0);
+xlabel("r (Angstrom)");
+ylabel("Psi(r)"); 
+title("Ground State Wavefunction"); // FIXED: Removed rogue 's'
+
+subplot(2,1,2); // FIXED: Corrected spelling of subplot
+plot(r, V); 
+xlabel("r (Angstrom)");
+ylabel("Energy (eV)"); 
+title("Morse Potential");
