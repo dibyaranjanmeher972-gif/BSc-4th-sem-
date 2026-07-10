@@ -33,7 +33,7 @@ end
 norm = sqrt(sum(psi0.^2) * h);
 psi0 = psi0 / norm;
 disp("Ground State Energy (MeV) = ") 
-plot(r,Psi0);
+plot(r,psi0);
 xlabel("r(fm)"); 
 ylabel("u(r)");
 xtitle("S-wave Ground State (Radial)"); 
